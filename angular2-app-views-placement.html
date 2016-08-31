@@ -1,0 +1,92 @@
+<!--Created by sbalakavi on 3/22/16.-->
+<img style="margin: 5%; margin-left: 45%;" src="/app/resources/img/ajax-loader.gif"
+     *ngIf="showLoader">
+
+<div *ngIf="!showLoader">
+    <div *ngIf="hasErrors() && !hasInfoMsgs() && !closeErr" class="row">
+        <div class="msg-center alert col-6 col-lg-6 col-lg-offset-3 alert-danger">
+            <div class="content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div style="background-color:#F8EDE6; color: #A94434; margin:0; padding:1px;"
+                             class="panel-heading">
+                            <p class="panel-title" style="text-align:center">
+                                <a data-toggle="collapse" href="#collapse1">
+                                    Collection errors
+                                </a>
+                                <a class="close times" (click)="closeError()">&times;</a>
+                            </p>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <li *ngFor="#error of getErrors(); #i = index">
+                                    <span>{{error}}</span>
+                                </li>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="hasInfoMsgs() && !closeInf" class="row">
+        <div class="msg-center alert col-6 col-lg-6 col-lg-offset-3 alert-success">
+            <p style="text-align:center">{{infoMessage}}
+                <a class="close times" (click)="closeInfo()">&times;</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-12">
+        <form action="" role="form" id="{{'editundefinedTodayForm' + serverName}}" class="form-horizontal">
+            <div class="form-group first">
+                <label [attr.for]="promoMessageId" class="col-lg-2 control-label">Promo Message</label>
+                <div class="col-lg-6">
+                    <input id="{{promoMessageId}}" type="text" name="{{promoMessageId}}" maxlength="48"
+                           value="{{getPromoMessage()}}" [(ngModel)]="promMsg"
+                           class="form-control text"/>
+                </div>
+                <div class="col-lg-4">
+                    <div class="pull-right">
+                        <button *ngIf="showCopyButton()" id="copyTo{{serverName}}" class="btn btn-info">Copy to
+                            {{serverName
+                            == 'pp'? 'Prod' : 'PreProd'}}
+                        </button>
+                        <button id="formSubmit{{serverName}}" class="btn btn-primary" (click)="postCollection($event)">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group first" style="margin-bottom:10px">
+                <div class="col-lg-3 col-lg-offset-2 col-title">Collection ID</div>
+                <div class="col-lg-4 col-title">Desciption</div>
+            </div>
+            <ul [ngGrid]="gridConfig"
+                class="sortable" style="list-style: none;">
+                <li *ngFor="#collection of getCollections(); #i = index"
+                    [ngGridItem]="gridItemConfig"
+                    class="placement placeOne {{collection.placementId % 2 == 0 ? '' : 'highlight '}}"
+                    (dragStart)="onDragStart(i, $event)"
+                    (dragStop)="onDragStop(i, $event)">
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label"> {{'Placement ' + collection.placementId}}</label>
+                        <div class="col-lg-3">
+                            <input type="text" style="width: 100%" [(ngModel)]="collection.collection.collectionId"
+                                   class="form-control"/>
+                        </div>
+                        <div class="col-lg-6">
+                            <input type="text" [(ngModel)]="collection.longTitle" class="form-control text"/>
+                        </div>
+                        <div class="col-lg-1"><span
+                                class="glyphicon glyphicon-align-justify draggable{{serverName}}"></span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div id="addGrid{{serverName}}" class="pull-right">
+                <button class="btn btn-primary" (click)="addPlacement($event)">Add placement</button>
+            </div>
+        </form>
+    </div>
+</div>
